@@ -23,7 +23,7 @@ PORTS = (9000, )
 SSL_PRIVATE_KEY_PATH = None
 
 # logging style, 'apache' or None
-LOG_STYLE = None
+LOG_STYLE = "apache"
 
 """
 Description
