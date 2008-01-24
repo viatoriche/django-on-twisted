@@ -138,21 +138,22 @@ if __name__ == "__builtin__":
 	application = service.Application("test:%s" % __port)
 
 	##################################################
-	# HTTP, Serve it via standard HTTP on port 8000
-	s = strports.service("tcp:%s" % __port, channel.HTTPFactory(site))
-	s.setServiceParent(application)
-
 	# HTTP FastCGI, Serve it via standard HTTP on port 1026
 	#s = strports.service("tcp:%s" % __port, channel.FastCGIFactory(site))
 	#s.setServiceParent(application)
 
 	# HTTPs, Serve it via standard HTTP on port 8081
-	#from twisted.internet.ssl import DefaultOpenSSLContextFactory
-	#s = strports.service( \
-	#	"ssl:%s:privateKey=%s" % (__port, SSL_PRIVATE_KEY_PATH), \
-	#	channel.HTTPFactory(site) \
-	#)
-	#s.setServiceParent(application)
+	if not SSL_PRIVATE_KEY_PATH :
+		# HTTP, Serve it via standard HTTP on port 8000
+		s = strports.service("tcp:%s" % __port, channel.HTTPFactory(site))
+		s.setServiceParent(application)
+	else :
+		from twisted.internet.ssl import DefaultOpenSSLContextFactory
+		s = strports.service( \
+			"ssl:%s:privateKey=%s" % (__port, SSL_PRIVATE_KEY_PATH), \
+			channel.HTTPFactory(site) \
+		)
+		s.setServiceParent(application)
 
 
 """
