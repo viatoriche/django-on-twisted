@@ -24,14 +24,12 @@ from django.core.handlers.wsgi import  WSGIHandler
 from django.core.servers.basehttp import AdminMediaHandler
 
 # default settings.
-PORTS = (8000, )
 SSL_PRIVATE_KEY_PATH = None
 LOG_STYLE = "apache"
 
-try :
-	from conf import *
-except :
-	pass
+for k, v in os.environ.items() :
+	if k.startswith("DOT_") :
+		locals()[k.replace("DOT_", "")] = v
 
 if not os.path.isdir("log") :
 	os.mkdir("log")

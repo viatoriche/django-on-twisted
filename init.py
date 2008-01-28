@@ -39,13 +39,18 @@ prog_stop = \
 """kill -9 `cat log/%(port)s.pid`"""
 
 prog_stand = \
-"""ENV_WWW_PORT=%(port)s twistd -ny run.py --pidfile=log/%(port)s.pid"""
+"""ENV_WWW_PORT=%(port)s twistd -ny ../run.py --pidfile=log/%(port)s.pid"""
 
 
 prog_start = \
-"""ENV_WWW_PORT=%(port)s twistd -y run.py --pidfile=log/%(port)s.pid --logfile=log/%(port)s.log"""
+"""ENV_WWW_PORT=%(port)s twistd -y ../run.py --pidfile=log/%(port)s.pid --logfile=log/%(port)s.log"""
 
-os.putenv("DJANGO_SETTINGS_MODULE", "%s.settings" % site )
+os.chdir(site)
+os.putenv("DJANGO_SETTINGS_MODULE", "settings")
+
+for i in dir(conf) :
+	if not i.startswith("__") and type(getattr(conf, i)) in (str, unicode, int, long, ) :
+		os.putenv("DOT_%s" % i, getattr(conf, i))
 
 if action == "stand" :
 	print "Standing"
