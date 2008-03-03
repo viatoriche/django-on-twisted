@@ -17,8 +17,10 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """
 
-import os, sys
+import re, os, sys
 import conf
+
+path = re.compile("/%s$" % re.escape(os.path.basename(__file__))).sub("", __file__)
 
 try :
 	site = sys.argv[1]
@@ -39,37 +41,42 @@ prog_stop = \
 """kill -9 `cat log/%(port)s.pid`"""
 
 prog_stand = \
-"""ENV_WWW_PORT=%(port)s twistd -ny ../run.py --pidfile=log/%(port)s.pid"""
+"""ENV_WWW_PORT=%(port)s twistd -ny ../%(path)s/run.py --pidfile=log/%(port)s.pid"""
 
 
 prog_start = \
-"""ENV_WWW_PORT=%(port)s twistd -y ../run.py --pidfile=log/%(port)s.pid --logfile=log/%(port)s.log"""
+"""ENV_WWW_PORT=%(port)s twistd -y ../%(path)s/run.py --pidfile=log/%(port)s.pid --logfile=log/%(port)s.log"""
 
 os.chdir(site)
 os.putenv("DJANGO_SETTINGS_MODULE", "settings")
 
 for i in dir(conf) :
-	if not i.startswith("__") and type(getattr(conf, i)) in (str, unicode, int, long, ) :
-		os.putenv("DOT_%s" % i, getattr(conf, i))
+	if not i.startswith("__") :
+		v = getattr(conf, i)
+		if v is None :
+		    v = ""
+		else :
+		    v = str(v)
+		os.putenv("DOT_%s" % i, v)
 
 if action == "stand" :
 	print "Standing"
 	for i in conf.PORTS :
-		run(prog_stand % {"port" : i })
+		run(prog_stand % {"port" : i, "path": path,  })
 		break
 elif action == "start" :
 	print "Starting"
 	for i in conf.PORTS :
-		run(prog_start % {"port" : i, })
+		run(prog_start % {"port" : i, "path": path, })
 elif action == "stop" :
 	print "Stopping"
 	for i in conf.PORTS :
-		run(prog_stop % {"port" : i, })
+		run(prog_stop % {"port" : i, "path": path, })
 elif action == "restart" :
 	print "Restarting"
 	for i in conf.PORTS :
-		run(prog_stop % {"port" : i, })
-		run(prog_start % {"port" : i, })
+		run(prog_stop % {"port" : i, "path": path, })
+		run(prog_start % {"port" : i, "path": path, })
 else :
 	print "Usage: %s {start|stop|restart}" % sys.argv[0]
 	sys.exit()
