@@ -15,7 +15,7 @@
 #	along with this program; if not, write to the Free Software
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import os.path, os, sys
+import re, os.path, os, sys
 
 from twisted.web2 import log, wsgi, resource, iweb
 from twisted.internet import reactor
@@ -70,6 +70,7 @@ User-Agnet: %s
    Referer: %s
 """
 LOG_FORMAT_APACHE = "%s - %s [%s] \"%s\" %s %d \"%s\" \"%s\""
+RE_NOT_LOG = re.compile("\.(css|js|png|gif|jpg)$")
 
 class AccessLoggingObserver (log.DefaultCommonAccessLoggingObserver) :
 
@@ -82,6 +83,8 @@ class AccessLoggingObserver (log.DefaultCommonAccessLoggingObserver) :
 			return
 
 		request = eventDict["request"]
+		if RE_NOT_LOG.search(request.uri) :
+			return
 		response = eventDict["response"]
 		loginfo = eventDict["loginfo"]
 		firstLine = "%s %s HTTP/%s" %(

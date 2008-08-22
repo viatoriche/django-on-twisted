@@ -17,13 +17,13 @@
 
 
 # ports to be run.
-PORTS = (9000, )
+PORTS = (9010, )
 
 # private key path
 SSL_PRIVATE_KEY_PATH = None
 
 # logging style, 'apache' or None
-LOG_STYLE = "apache"
+LOG_STYLE = ""
 
 """
 Description
