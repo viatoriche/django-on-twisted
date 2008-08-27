@@ -18,7 +18,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ##################################################################
 
-. `dirname $0`/env.sh
+[ -f "`dirname $0`/env.sh" ] && . `dirname $0`/env.sh
 
 python `dirname $0`/init.py $1 $2
 
