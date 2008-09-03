@@ -41,11 +41,11 @@ prog_stop = \
 """kill -9 `cat log/%(port)s.pid`"""
 
 prog_stand = \
-"""ENV_WWW_PORT=%(port)s twistd -ny ../%(path)s/run.py --pidfile=log/%(port)s.pid"""
+"""ENV_WWW_PORT=%(port)s twistd -ny ../%(path)s/run.py --pidfile=../log/%(port)s.pid"""
 
 
 prog_start = \
-"""ENV_WWW_PORT=%(port)s twistd -y ../%(path)s/run.py --pidfile=log/%(port)s.pid --logfile=log/%(port)s.log"""
+"""ENV_WWW_PORT=%(port)s twistd -y ../%(path)s/run.py --pidfile=../log/%(port)s.pid --logfile=../log/%(port)s.log"""
 
 os.chdir(site)
 os.putenv("DJANGO_SETTINGS_MODULE", "settings")
